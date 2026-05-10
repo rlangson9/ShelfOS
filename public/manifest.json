@@ -1,0 +1,20 @@
+{
+  "name": "ShelfOS",
+  "short_name": "ShelfOS",
+  "description": "Modern grocery and inventory management system for supermarkets and suppliers",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a14",
+  "theme_color": "#0a0a14",
+  "orientation": "landscape",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "productivity", "utilities"],
+  "scope": "/"
+}
