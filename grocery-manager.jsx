@@ -28,9 +28,9 @@ const SUPPLIERS_SEED = [
   { id:"sup8", name:"Tobacco & Specialty", contact:"orders@tobaccospecialty.com", phone:"(202)555-0808", leadDays:5, rating:4.1, categories:["Tobacco"], active:true },
 ];
 const USERS_SEED = [
-  { id:"u1", role:"store",    name:"Alex Kim",    email:"alex@downtown.com",   password:"store123",  storeId:"s1",   status:"active", subscriptionId:"sub1" },
-  { id:"u2", role:"store",    name:"Sam Lee",     email:"sam@westside.com",    password:"store123",  storeId:"s2",   status:"active", subscriptionId:"sub1" },
-  { id:"u3", role:"store",    name:"Jordan Park", email:"jordan@northgate.com",password:"store123",  storeId:"s3",   status:"active", subscriptionId:"sub2" },
+  { id:"u1", role:"store",    name:"Alex Kim",    email:"alex@downtown.com",   password:"store123",  storeId:"s1",   status:"active", subscriptionId:"sub1", paymentMethods: ["Visa ending in 4242", "Mastercard ending in 5555"] },
+  { id:"u2", role:"store",    name:"Sam Lee",     email:"sam@westside.com",    password:"store123",  storeId:"s2",   status:"active", subscriptionId:"sub1", paymentMethods: ["Visa ending in 1111"] },
+  { id:"u3", role:"store",    name:"Jordan Park", email:"jordan@northgate.com",password:"store123",  storeId:"s3",   status:"active", subscriptionId:"sub2", paymentMethods: ["Amex ending in 9876"] },
   { id:"u4", role:"supplier", name:"FreshFarm Co.",   email:"orders@freshfarm.com",   password:"sup123", supplierId:"sup1", status:"active" },
   { id:"u5", role:"supplier", name:"MeatWorks LLC",   email:"supply@meatworks.com",   password:"sup123", supplierId:"sup2", status:"active" },
   { id:"u6", role:"supplier", name:"BakeryDirect",    email:"hello@bakerydirect.com", password:"sup123", supplierId:"sup3", status:"active" },
@@ -1937,6 +1937,8 @@ function StoreDashboard({session,stores,suppliers,allProducts,setAllProducts,all
 
   const userSubscription = subscriptions.find(s => s.userId === session.user.id);
   const userPayments = payments.filter(p => p.userId === session.user.id);
+  const currentUser = users.find(u => u.id === session.user.id);
+  const userPaymentMethods = currentUser?.paymentMethods || [];
 
   return(
     <div style={{minHeight:"100vh",display:"flex",flexDirection:"column"}}>
@@ -2578,14 +2580,14 @@ function StoreDashboard({session,stores,suppliers,allProducts,setAllProducts,all
             <div style={{marginBottom:16}}>
               <div style={{fontSize:12,color:C.muted,marginBottom:8,textTransform:'uppercase',letterSpacing:'0.05em'}}>Payment Method</div>
               <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
-                {['Visa ending in 4242', 'Mastercard ending in 5555', 'New Card'].map(method => (
+                {[...userPaymentMethods, 'Add New Card'].map(method => (
                   <button 
                     key={method}
                     className="bg"
                     style={{padding:'10px 16px',fontSize:12,flex:1}}
-                    onClick={() => placeMarketplaceOrder(method)}
+                    onClick={() => placeMarketplaceOrder(method === 'Add New Card' ? 'New Card' : method)}
                   >
-                    Pay with {method}
+                    {method === 'Add New Card' ? method : `Pay with ${method}`}
                   </button>
                 ))}
               </div>
@@ -2648,7 +2650,7 @@ function StoreDashboard({session,stores,suppliers,allProducts,setAllProducts,all
                         type: 'subscription',
                         status: 'completed',
                         date: new Date().toISOString(),
-                        method: 'Visa ending in 4242'
+                        method: userPaymentMethods[0] || 'Visa ending in 4242'
                       };
                       setPayments(prev => [...prev, newPayment]);
                       setShowPaymentModal(null);
