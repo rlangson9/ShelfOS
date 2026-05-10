@@ -1939,6 +1939,42 @@ function StoreDashboard({session,stores,suppliers,allProducts,setAllProducts,all
   const userPayments = payments.filter(p => p.userId === session.user.id);
   const currentUser = users.find(u => u.id === session.user.id);
   const userPaymentMethods = currentUser?.paymentMethods || [];
+  const [paymentFilter, setPaymentFilter] = useState("");
+  const [paymentDateFilter, setPaymentDateFilter] = useState("");
+
+  // Filtered payments based on selected filters
+  const filteredPayments = userPayments.filter(payment => {
+    // Type filter
+    if (paymentFilter && payment.type !== paymentFilter) return false;
+    
+    // Date filter
+    if (paymentDateFilter) {
+      const paymentDate = new Date(payment.date);
+      const today = new Date();
+      
+      if (paymentDateFilter === "7") {
+        // Last 7 days
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(today.getDate() - 7);
+        if (paymentDate < sevenDaysAgo) return false;
+      } else if (paymentDateFilter === "30") {
+        // Last 30 days
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(today.getDate() - 30);
+        if (paymentDate < thirtyDaysAgo) return false;
+      } else if (paymentDateFilter === "month") {
+        // This month
+        if (paymentDate.getMonth() !== today.getMonth() || paymentDate.getFullYear() !== today.getFullYear()) return false;
+      } else if (paymentDateFilter === "lastMonth") {
+        // Last month
+        const lastMonth = new Date();
+        lastMonth.setMonth(lastMonth.getMonth() - 1);
+        if (paymentDate.getMonth() !== lastMonth.getMonth() || paymentDate.getFullYear() !== lastMonth.getFullYear()) return false;
+      }
+    }
+    
+    return true;
+  });
 
   return(
     <div style={{minHeight:"100vh",display:"flex",flexDirection:"column"}}>
@@ -2293,16 +2329,78 @@ function StoreDashboard({session,stores,suppliers,allProducts,setAllProducts,all
         {/* ── PAYMENTS ── */}
         {tab==="payments"&&(
           <div>
-            <div style={{fontSize:14,marginBottom:14}}>Payment History</div>
-            {userPayments.length === 0 ? (
-              <div style={{textAlign:"center",padding:60,color:C.muted}}>No payment history yet</div>
+            <div style={{fontSize:14,marginBottom:14,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+              <span>Payment History</span>
+              <div style={{display:"flex",gap:8}}>
+                <select 
+                  value={paymentFilter} 
+                  onChange={e => setPaymentFilter(e.target.value)}
+                  style={{width:150}}
+                >
+                  <option value="">All Types</option>
+                  <option value="subscription">Subscriptions</option>
+                  <option value="order">Orders</option>
+                </select>
+                <select 
+                  value={paymentDateFilter} 
+                  onChange={e => setPaymentDateFilter(e.target.value)}
+                  style={{width:150}}
+                >
+                  <option value="">All Time</option>
+                  <option value="7">Last 7 Days</option>
+                  <option value="30">Last 30 Days</option>
+                  <option value="month">This Month</option>
+                  <option value="lastMonth">Last Month</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Summary Stats */}
+            <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:12,marginBottom:16}}>
+              <div className="sc">
+                <div style={{fontSize:10,color:C.muted,letterSpacing:".07em",textTransform:"uppercase",marginBottom:4}}>Total Spent</div>
+                <div style={{fontSize:24,fontWeight:500,color:C.green}}>
+                  ${filteredPayments.reduce((s,p) => s+p.amount,0).toFixed(2)}
+                </div>
+              </div>
+              <div className="sc">
+                <div style={{fontSize:10,color:C.muted,letterSpacing:".07em",textTransform:"uppercase",marginBottom:4}}>Subscriptions</div>
+                <div style={{fontSize:24,fontWeight:500,color:C.accent}}>
+                  ${filteredPayments.filter(p=>p.type==="subscription").reduce((s,p)=>s+p.amount,0).toFixed(2)}
+                </div>
+              </div>
+              <div className="sc">
+                <div style={{fontSize:10,color:C.muted,letterSpacing:".07em",textTransform:"uppercase",marginBottom:4}}>Orders</div>
+                <div style={{fontSize:24,fontWeight:500,color:C.green}}>
+                  ${filteredPayments.filter(p=>p.type==="order").reduce((s,p)=>s+p.amount,0).toFixed(2)}
+                </div>
+              </div>
+              <div className="sc">
+                <div style={{fontSize:10,color:C.muted,letterSpacing:".07em",textTransform:"uppercase",marginBottom:4}}>Transactions</div>
+                <div style={{fontSize:24,fontWeight:500,color:C.amber}}>
+                  {filteredPayments.length}
+                </div>
+              </div>
+            </div>
+
+            {filteredPayments.length === 0 ? (
+              <div style={{textAlign:"center",padding:60,color:C.muted}}>No payments found for the selected filters</div>
             ) : (
               <div style={{display:"flex",flexDirection:"column",gap:10}}>
-                {userPayments.map(payment => (
+                {filteredPayments.map(payment => (
                   <div key={payment.id} className="card" style={{padding:16,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
                     <div>
-                      <div style={{fontSize:13,fontWeight:500,marginBottom:4}}>
-                        {payment.type === 'subscription' ? 'Subscription Payment' : 'Order Payment'}
+                      <div style={{display:"flex",gap:8,alignItems:"center",marginBottom:4}}>
+                        <div style={{fontSize:13,fontWeight:500}}>
+                          {payment.type === 'subscription' ? 'Subscription Payment' : 'Order Payment'}
+                        </div>
+                        <span className="pill" style={{
+                          background:payment.type === 'subscription' ? `${C.accent}22` : `${C.green}22`,
+                          color:payment.type === 'subscription' ? C.accent : C.green,
+                          fontSize:10
+                        }}>
+                          {payment.type}
+                        </span>
                       </div>
                       <div style={{fontSize:11,color:C.muted}}>
                         {new Date(payment.date).toLocaleDateString()} · {payment.method}
