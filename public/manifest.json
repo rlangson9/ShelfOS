@@ -9,7 +9,7 @@
   "orientation": "landscape",
   "icons": [
     {
-      "src": "/favicon.svg",
+      "src": "/shelfos_logo.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"

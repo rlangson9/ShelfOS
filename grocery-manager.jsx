@@ -281,7 +281,7 @@ function LandingPage({onLogin, onRegister, toast, plans}){
       {/* Nav */}
       <nav style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 32px",height:60,borderBottom:`1px solid ${C.border}`,background:C.surface,position:"sticky",top:0,zIndex:10}}>
         <div style={{display:"flex",alignItems:"center",gap:10}}>
-          <div style={{width:28,height:28,background:C.accent,borderRadius:7,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14}}>⬡</div>
+          <img src="/shelfos_logo.svg" alt="ShelfOS" style={{width:28,height:28}}/>
           <span style={{fontFamily:DF,fontSize:13,fontWeight:700,letterSpacing:".05em"}}>SHELF<span style={{color:C.accent}}>OS</span></span>
         </div>
         <div style={{display:"flex",gap:8}}>
@@ -381,7 +381,7 @@ function LandingPage({onLogin, onRegister, toast, plans}){
         <div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",padding:"32px 16px"}}>
           <div style={{width:"100%",maxWidth:420}}>
             <div style={{textAlign:"center",marginBottom:28}}>
-              <div style={{width:40,height:40,background:C.accent,borderRadius:10,display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:18,marginBottom:12}}>⬡</div>
+              <img src="/shelfos_logo.svg" alt="ShelfOS" style={{width:40,height:40,marginBottom:12}}/>
               <div style={{fontFamily:DF,fontSize:14,fontWeight:700,letterSpacing:".05em"}}>SHELF<span style={{color:C.accent}}>OS</span></div>
             </div>
 
@@ -813,7 +813,7 @@ function AdminPanel({session,users,setUsers,stores,suppliers,allProducts,allOrde
       {/* Admin Header */}
       <div style={{background:"#0a0014",borderBottom:`1px solid ${C.pink}33`,padding:"0 20px",display:"flex",alignItems:"center",justifyContent:"space-between",height:52}}>
         <div style={{display:"flex",alignItems:"center",gap:10}}>
-          <div style={{width:26,height:26,background:C.pink,borderRadius:6,display:"flex",alignItems:"center",justifyContent:"center",fontSize:12}}>⬡</div>
+          <img src="/shelfos_logo.svg" alt="ShelfOS" style={{width:26,height:26}}/>
           <span style={{fontFamily:DF,fontSize:12,fontWeight:700,letterSpacing:".05em"}}>SHELF<span style={{color:C.pink}}>OS</span> <span style={{color:C.muted,fontSize:10,fontWeight:400}}>ADMIN</span></span>
           <span style={{padding:"2px 8px",borderRadius:100,background:`${C.pink}22`,color:C.pink,fontSize:10,border:`1px solid ${C.pink}44`}}>ADMIN CONSOLE</span>
         </div>
@@ -1102,7 +1102,7 @@ function SupplierPortal({session,stores,allOrders,setAllOrders,catalog,setCatalo
     <div style={{minHeight:"100vh",display:"flex",flexDirection:"column"}}>
       <div style={{background:"#00100a",borderBottom:`1px solid ${C.green}33`,padding:"0 20px",display:"flex",alignItems:"center",justifyContent:"space-between",height:52}}>
         <div style={{display:"flex",alignItems:"center",gap:10}}>
-          <div style={{width:26,height:26,background:C.green,borderRadius:6,display:"flex",alignItems:"center",justifyContent:"center",fontSize:12}}>⬡</div>
+          <img src="/shelfos_logo.svg" alt="ShelfOS" style={{width:26,height:26}}/>
           <span style={{fontFamily:DF,fontSize:12,fontWeight:700}}>SHELF<span style={{color:C.green}}>OS</span></span>
           <span style={{padding:"2px 8px",borderRadius:100,background:`${C.green}22`,color:C.green,fontSize:10}}>SUPPLIER PORTAL</span>
         </div>
@@ -1981,7 +1981,7 @@ function StoreDashboard({session,stores,suppliers,allProducts,setAllProducts,all
       {/* Header */}
       <div style={{background:C.surface,borderBottom:`1px solid ${C.border}`,padding:"0 18px",display:"flex",alignItems:"center",gap:10,height:52}}>
         <div style={{display:"flex",alignItems:"center",gap:8,flexShrink:0}}>
-          <div style={{width:26,height:26,background:C.accent,borderRadius:6,display:"flex",alignItems:"center",justifyContent:"center",fontSize:12}}>⬡</div>
+          <img src="/shelfos_logo.svg" alt="ShelfOS" style={{width:26,height:26}}/>
           <span style={{fontFamily:DF,fontSize:12,fontWeight:700}}>SHELF<span style={{color:C.accent}}>OS</span></span>
         </div>
         {/* store switcher — show all stores for multi-store managers */}
