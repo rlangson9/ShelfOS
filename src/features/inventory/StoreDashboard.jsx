@@ -326,6 +326,24 @@ Thank you for your purchase!
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <button
+            className="bg"
+            title="Scan Barcode"
+            onClick={() => toast("Barcode scanner activated")}
+            style={{ padding: '8px', borderRadius: 8 }}
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="4" y1="21" x2="4" y2="15"></line>
+              <line x1="4" y1="10" x2="4" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12" y2="3"></line>
+              <line x1="20" y1="21" x2="20" y2="17"></line>
+              <line x1="20" y1="13" x2="20" y2="3"></line>
+              <line x1="1" y1="18" x2="7" y2="18"></line>
+              <line x1="9" y1="18" x2="15" y2="18"></line>
+              <line x1="17" y1="18" x2="23" y2="18"></line>
+            </svg>
+          </button>
           {cart.length > 0 && (
             <button
               className="bp"
