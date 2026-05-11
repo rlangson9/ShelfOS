@@ -19,6 +19,7 @@
     "electron:build:linux": "vite build && electron-builder --linux"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.100.10",
     "react": "^19.2.5",
     "react-dom": "^19.2.5"
   },

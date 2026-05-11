@@ -1,9 +1,20 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AppProvider, useAuth, useApp } from './context/AppContext';
 import LandingPage from './features/auth/LandingPage';
 import StoreDashboard from './features/inventory/StoreDashboard';
 import SupplierPortal from './features/supplier/SupplierPortal';
 import AdminPanel from './features/admin/AdminPanel';
 import { C } from './utils/constants';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 2,
+      refetchOnWindowFocus: false,
+      staleTime: 5 * 60 * 1000,
+    },
+  },
+});
 
 const GLOBAL_CSS = `
   @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap');
@@ -78,8 +89,10 @@ function AppContent() {
 
 export default function App() {
   return (
-    <AppProvider>
-      <AppContent />
-    </AppProvider>
+    <QueryClientProvider client={queryClient}>
+      <AppProvider>
+        <AppContent />
+      </AppProvider>
+    </QueryClientProvider>
   );
 }
