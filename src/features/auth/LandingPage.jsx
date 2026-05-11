@@ -42,7 +42,7 @@ export default function LandingPage() {
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <nav style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 32px', height: 60, borderBottom: `1px solid ${C.border}`, background: C.surface, position: 'sticky', top: 0, zIndex: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <img src="/shelfos_logo.svg" alt="ShelfOS" style={{ width: 28, height: 28 }} />
+          <img src="/SHELFOS-logo.png" alt="ShelfOS" style={{ width: 28, height: 28 }} />
           <span style={{ fontFamily: DF, fontSize: 13, fontWeight: 700, letterSpacing: '.05em' }}>SHELF<span style={{ color: C.accent }}>OS</span></span>
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
@@ -138,7 +138,7 @@ export default function LandingPage() {
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '32px 16px' }}>
           <div style={{ width: '100%', maxWidth: 420 }}>
             <div style={{ textAlign: 'center', marginBottom: 28 }}>
-              <img src="/shelfos_logo.svg" alt="ShelfOS" style={{ width: 40, height: 40, marginBottom: 12 }} />
+              <img src="/SHELFOS-logo.png" alt="ShelfOS" style={{ width: 40, height: 40, marginBottom: 12 }} />
               <div style={{ fontFamily: DF, fontSize: 14, fontWeight: 700, letterSpacing: '.05em' }}>SHELF<span style={{ color: C.accent }}>OS</span></div>
             </div>
 

@@ -38,7 +38,7 @@ export default function AdminPanel() {
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px', height: 60, borderBottom: `1px solid ${C.border}`, background: C.surface }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <img src="/shelfos_logo.svg" alt="ShelfOS" style={{ width: 26, height: 26 }} />
+          <img src="/SHELFOS-logo.png" alt="ShelfOS" style={{ width: 26, height: 26 }} />
           <span style={{ fontFamily: DF, fontSize: 12, fontWeight: 700 }}>SHELF<span style={{ color: C.pink }}>OS</span></span>
           <span style={{ padding: '2px 8px', borderRadius: 100, background: `${C.pink}22`, color: C.pink, fontSize: 10 }}>ADMIN PORTAL</span>
         </div>

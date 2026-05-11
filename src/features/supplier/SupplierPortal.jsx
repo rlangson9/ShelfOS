@@ -100,7 +100,7 @@ export default function SupplierPortal() {
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px', height: 60, borderBottom: `1px solid ${C.border}`, background: C.surface }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <img src="/shelfos_logo.svg" alt="ShelfOS" style={{ width: 26, height: 26 }} />
+          <img src="/SHELFOS-logo.png" alt="ShelfOS" style={{ width: 26, height: 26 }} />
           <span style={{ fontFamily: DF, fontSize: 12, fontWeight: 700 }}>SHELF<span style={{ color: C.green }}>OS</span></span>
           <span style={{ padding: '2px 8px', borderRadius: 100, background: `${C.green}22`, color: C.green, fontSize: 10 }}>SUPPLIER PORTAL</span>
         </div>

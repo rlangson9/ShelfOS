@@ -300,7 +300,7 @@ Thank you for your purchase!
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 20px', height: 60, borderBottom: `1px solid ${C.border}`, background: C.surface }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-          <img src="/shelfos_logo.svg" alt="ShelfOS" style={{ width: 26, height: 26 }} />
+          <img src="/SHELFOS-logo.png" alt="ShelfOS" style={{ width: 26, height: 26 }} />
           <span style={{ fontFamily: DF, fontSize: 12, fontWeight: 700 }}>SHELF<span style={{ color: C.accent }}>OS</span></span>
         </div>
 
