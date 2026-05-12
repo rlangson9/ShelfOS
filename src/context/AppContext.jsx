@@ -1,4 +1,5 @@
-import { createContext, useContext, useReducer, useCallback } from 'react';
+import { createContext, useContext, useReducer, useCallback, useEffect, useRef, useState } from 'react';
+import { io } from 'socket.io-client';
 import { USERS_SEED, STORES_SEED, SUPPLIERS_SEED, makeProds, SEED_ORDERS, CATALOG_SEED, SUBSCRIPTIONS_SEED, PAYMENTS_SEED, PRICING_PLANS } from '../utils/seedData';
 import { getProductImageUrl } from '../utils/helpers';
 
@@ -44,6 +45,9 @@ function appReducer(state, action) {
     case 'UPDATE_PRODUCT':
       return { ...state, allProducts: state.allProducts.map(p => p.id === action.payload.id ? { ...p, ...action.payload } : p) };
 
+    case 'UPDATE_PRODUCT_TAG':
+      return { ...state, allProducts: state.allProducts.map(p => p.id === action.payload.productId ? { ...p, tag: { ...p.tag, ...action.payload.tagData } } : p) };
+
     case 'ADD_CATALOG_PRODUCT':
       return { ...state, catalog: [action.payload, ...state.catalog] };
 
@@ -84,6 +88,8 @@ function appReducer(state, action) {
 
 export function AppProvider({ children }) {
   const [state, dispatch] = useReducer(appReducer, initialState);
+  const socketRef = useRef(null);
+  const [socketConnected, setSocketConnected] = useState(false);
 
   const toast = useCallback((msg, color = '#2ecc71') => {
     const id = Date.now() + Math.random();
@@ -91,12 +97,88 @@ export function AppProvider({ children }) {
     setTimeout(() => dispatch({ type: 'REMOVE_TOAST', payload: id }), 3200);
   }, []);
 
+  const setupSocket = useCallback(() => {
+    try {
+      socketRef.current = io(process.env.REACT_APP_API_URL || 'http://localhost:5000', {
+        transports: ['websocket', 'polling'],
+      });
+
+      socketRef.current.on('connect', () => {
+        console.log('Socket connected');
+        setSocketConnected(true);
+      });
+
+      socketRef.current.on('disconnect', () => {
+        console.log('Socket disconnected');
+        setSocketConnected(false);
+      });
+
+      socketRef.current.on('tag:sync', (data) => {
+        console.log('Received tag sync:', data);
+        dispatch({
+          type: 'UPDATE_PRODUCT_TAG',
+          payload: data
+        });
+      });
+
+      socketRef.current.on('tag:deleted', (data) => {
+        console.log('Tag deleted:', data);
+      });
+
+      socketRef.current.on('tag-synced', (data) => {
+        console.log('Tag synced:', data);
+        dispatch({
+          type: 'UPDATE_PRODUCT_TAG',
+          payload: data
+        });
+      });
+
+    } catch (error) {
+      console.error('Socket connection error:', error);
+    }
+  }, []);
+
+  const joinStore = useCallback((storeId) => {
+    if (socketRef.current && socketConnected) {
+      socketRef.current.emit('join-store', storeId);
+    }
+  }, [socketConnected]);
+
+  const joinSupplier = useCallback((supplierId) => {
+    if (socketRef.current && socketConnected) {
+      socketRef.current.emit('join-supplier', supplierId);
+    }
+  }, [socketConnected]);
+
+  const emitSyncTag = useCallback((storeId, productId, tagData) => {
+    if (socketRef.current && socketConnected) {
+      socketRef.current.emit('sync-tag', { storeId, productId, tagData });
+    }
+  }, [socketConnected]);
+
+  useEffect(() => {
+    setupSocket();
+
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+      }
+    };
+  }, [setupSocket]);
+
   const login = useCallback((email, password) => {
     const user = state.users.find(u => u.email === email && u.password === password);
     if (!user) return false;
     dispatch({ type: 'SET_SESSION', payload: { user } });
+
+    if (user.storeId) {
+      joinStore(user.storeId);
+    } else if (user.supplierId) {
+      joinSupplier(user.supplierId);
+    }
+
     return true;
-  }, [state.users]);
+  }, [state.users, joinStore, joinSupplier]);
 
   const logout = useCallback(() => {
     dispatch({ type: 'LOGOUT' });
@@ -208,6 +290,10 @@ export function AppProvider({ children }) {
     addCatalogProduct,
     updateCatalogProduct,
     addPayment,
+    socketConnected,
+    joinStore,
+    joinSupplier,
+    emitSyncTag,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
@@ -236,12 +322,18 @@ export function useAuth() {
 }
 
 export function useStore() {
-  const { allProducts, stores, suppliers, catalog, syncingIds, syncTag, addProductToStore, updateStoreProduct, addCatalogProduct, updateCatalogProduct } = useApp();
+  const { allProducts, stores, suppliers, catalog, syncingIds, syncTag, addProductToStore, updateStoreProduct, addCatalogProduct, updateCatalogProduct, joinStore, emitSyncTag } = useApp();
   const { session } = useApp();
   const storeId = session?.user?.storeId;
   const storeProducts = allProducts.filter(p => p.storeId === storeId);
   const supplierId = session?.user?.supplierId;
   const supplierCatalog = catalog.filter(p => p.supplierId === supplierId);
+
+  useEffect(() => {
+    if (storeId && session?.user?.role === 'store') {
+      joinStore(storeId);
+    }
+  }, [storeId, session, joinStore]);
 
   return {
     allProducts,
@@ -256,6 +348,7 @@ export function useStore() {
     updateStoreProduct,
     addCatalogProduct,
     updateCatalogProduct,
+    emitSyncTag,
   };
 }
 
