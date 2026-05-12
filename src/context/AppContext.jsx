@@ -17,6 +17,7 @@ const initialState = {
   payments: PAYMENTS_SEED,
   syncingIds: new Set(),
   toasts: [],
+  alerts: [],
 };
 
 function appReducer(state, action) {
@@ -74,6 +75,12 @@ function appReducer(state, action) {
         syncingIds: newSyncingIds,
         allProducts: state.allProducts.map(p => p.id === action.payload ? { ...p, tag: { ...p.tag, synced: true, lastSync: 'just now', displayPrice: p.price, displayName: p.name } } : p)
       };
+
+    case 'ADD_ALERTS':
+      return { ...state, alerts: [...action.payload, ...state.alerts] };
+
+    case 'ACKNOWLEDGE_ALERT':
+      return { ...state, alerts: state.alerts.map(a => a.id === action.payload ? { ...a, acknowledged: true } : a) };
 
     case 'ADD_TOAST':
       return { ...state, toasts: [...state.toasts, action.payload] };
@@ -133,10 +140,22 @@ export function AppProvider({ children }) {
         });
       });
 
+      socketRef.current.on('alert', (data) => {
+        console.log('Received alert:', data);
+        dispatch({
+          type: 'ADD_ALERTS',
+          payload: data.alerts
+        });
+        data.alerts.forEach(alert => {
+          const color = alert.severity === 'critical' ? '#e74c3c' : '#f39c12';
+          toast(alert.message, color);
+        });
+      });
+
     } catch (error) {
       console.error('Socket connection error:', error);
     }
-  }, []);
+  }, [toast]);
 
   const joinStore = useCallback((storeId) => {
     if (socketRef.current && socketConnected) {
@@ -272,6 +291,10 @@ export function AppProvider({ children }) {
     dispatch({ type: 'ADD_PAYMENT', payload: payment });
   }, []);
 
+  const acknowledgeAlert = useCallback((alertId) => {
+    dispatch({ type: 'ACKNOWLEDGE_ALERT', payload: alertId });
+  }, []);
+
   const value = {
     ...state,
     plans: PRICING_PLANS,
@@ -290,6 +313,7 @@ export function AppProvider({ children }) {
     addCatalogProduct,
     updateCatalogProduct,
     addPayment,
+    acknowledgeAlert,
     socketConnected,
     joinStore,
     joinSupplier,
@@ -392,5 +416,16 @@ export function useUsers() {
     updateUser,
     pendingUsers: users.filter(u => u.status === 'pending'),
     activeUsers: users.filter(u => u.status === 'active'),
+  };
+}
+
+export function useAlerts() {
+  const { alerts, acknowledgeAlert, session } = useApp();
+  const storeId = session?.user?.storeId;
+  const storeAlerts = alerts.filter(a => a.storeId === storeId && !a.acknowledged);
+
+  return {
+    alerts: storeAlerts,
+    acknowledgeAlert,
   };
 }
